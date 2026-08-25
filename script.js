@@ -40,6 +40,8 @@ function handleClick(e) {
 
   const nextBoard = applyMove(data.board, idx, data.current);
   if (!nextBoard) return;
+  undoStack = [];
+  undoStack.push(data.board);
   data.board = nextBoard;
   render();
 
@@ -50,6 +52,8 @@ function handleClick(e) {
 
   if (result) {
     data.gameOver = true;
+
+    undoStack.push(data.current);
     if (result.winner) {
       result.combo.forEach(i => cells[i].classList.add('winning'));
       setStatus(`Player ${result.winner} wins!`, 'win');
@@ -61,11 +65,14 @@ function handleClick(e) {
     return;
   }
 
+  undoStack.push(data.current);
   data.current = getNextPlayer(data.current);
   setStatus(`Player ${data.current}'s turn`);
 }
 
 function restartGame() {
+  undoStack = [];
+  redoStack = [];
   data = createInitialState();
   render();
   setStatus(`Player ${data.current}'s turn`);
@@ -93,6 +100,15 @@ function handleRedo() {
 function undo() {
     redoStack.push(undoStack.pop());
     source = getTopImage();
+    
+    redoStack.push(data.current);
+    redoStack.push(data.board);
+    
+    data.board = undoStack[0];
+    data.current = undoStack[1];
+
+    setStatus(`Player ${data.current}'s turn`);
+
     render();
 }
 //Undo the previous action
