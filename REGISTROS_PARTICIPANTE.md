@@ -22,11 +22,16 @@ documentação própria da solução;
     --Entender como funciona os passos de desenho do programa
     --Algo envolvendo render, sem conhecimento? eventos do mouse.
     --Precisa colocar algo sobre o evento do mouse nessa direção.
+    --Funções undo e redo stack para verificar se so tem uma opção no local de pilha.
+
 -- Entendo mais do codigo agora, mas o tempo é pequeno para eu fazer qualquer modificação.
 -- Estudo sobre DOM é necessario.
+-- Estudo sobre funções em javascript é necessario.
 
 
 - rascunhos;
+--É isso;
+
 
 
 - observações;
@@ -39,7 +44,7 @@ documentação própria da solução;
 - listas ou checklists;
     -Analisar o codigo (feito)
     -Entender o que precisa se mudado (semi-feito)
-    -Entender o que precisa se adicionado
+    -Entender o que precisa se adicionado (não terminado)
     
 
 - referências;
