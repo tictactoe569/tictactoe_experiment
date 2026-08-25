@@ -14,6 +14,7 @@ function createInitialState() {
     board:   Array(9).fill(''),
     current: 'X',
     gameOver: false,
+    isUndoRedo: false,
   };
 }
 
@@ -63,4 +64,108 @@ function check(board) {
 // Allow require() in Node.js (Jest) while remaining a plain script in the browser.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, check };
+}
+
+// enable the `UndoRedo` plugin
+undo: true,
+
+undoRedo.undo()
+undoRedo.redo()
+let undoBtn = document.getElementById("undo");
+let redoBtn = document.getElementById("redo");
+
+function createUndoRedo(initial, options = {}) {
+  const { trace, historyLimit = Infinity } = options;
+  let _historyLimit = historyLimit;
+  let _trimStartArray = createTrimStartArray(_historyLimit);
+  let _timeline = {
+    past: [],
+    current: initial,
+    future: []
+  };
+  log("init");
+
+  function log(str = "") {
+    trace && console.log(str, this.current);
+  }
+
+  function _getCurrent() {
+    return _timeline.current;
+  }
+
+  function _canUndo() {
+    return _timeline.past.length > 0;
+  }
+
+  function _canRedo() {
+    return _timeline.future.length > 0;
+  }
+
+  function update(next) {
+    // update the current value
+    const { past, current } = _timeline;
+    // calculate history storage limit
+    const limitedPast = _trimStartArray(past);
+    _timeline = {
+      past: [...limitedPast, current],
+      current: next,
+      // reset redo, don't allow redo if we update in the middle of the timeline
+      // this seems to be the idiomatic approach for most applications
+      future: []
+    };
+    log("update");
+    return this.current;
+  }
+
+  function undo() {
+    if (this.canUndo) {
+      const { past, current, future } = _timeline;
+      const [restOfArr, lastItem] = stripLast(past);
+      _timeline = {
+        past: restOfArr,
+        current: lastItem,
+        future: [...future, current]
+      };
+      log("undo");
+      return this.current;
+    }
+  }
+
+  function redo() {
+    if (this.canRedo) {
+      const { past, current, future } = _timeline;
+      const [restOfArr, lastItem] = stripLast(future);
+      _timeline = {
+        past: [...past, current],
+        current: lastItem,
+        future: restOfArr
+      };
+      log("redo");
+      return this.current;
+    }
+  }
+
+  const publicAPI = {
+    update,
+    undo,
+    redo,
+    get current() {
+      return _getCurrent();
+    },
+    get canRedo() {
+      return _canRedo();
+    },
+    get canUndo() {
+      return _canUndo();
+    },
+    get historyLimit() {
+      return _historyLimit;
+    },
+    set historyLimit(val) {
+      _historyLimit = val;
+      _trimStartArray = createTrimStartArray(_historyLimit);
+    }
+  };
+
+  return publicAPI;
 }
