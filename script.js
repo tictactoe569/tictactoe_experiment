@@ -6,6 +6,10 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+let undoB = document.getElementById("undo"); 
+let redoB = document.getElementById("redo");
+let undoStack = [];
+let redoStack = [];
 
 let data = createInitialState();
 const board = document.getElementById('board');
@@ -15,13 +19,20 @@ function render() {
     cell.textContent = data.board[i];
     cell.className   = 'cell' + (data.board[i] ? ` ${data.board[i].toLowerCase()}` : '');
     cell.disabled    = data.board[i] !== '' || data.gameOver;
+
+
   });
+
+
 }
 
 function setStatus(msg, cls = '') {
   status.textContent = msg;
   status.className   = 'status' + (cls ? ` ${cls}` : '');
 }
+
+
+
 
 function handleClick(e) {
   const idx = Number(e.currentTarget.dataset.index);
@@ -60,8 +71,43 @@ function restartGame() {
   setStatus(`Player ${data.current}'s turn`);
 }
 
+function handleMouseUp() {
+    clicked = false;
+    //Push the image to the history
+    undoStack.push(source)
+    redoStack = [];
+}
+
+function handleUndo() {
+    if (undoStack.length>1) {
+        undo();
+    }
+}
+function handleRedo() {
+    if (redoStack.length>=1) {
+        redo();
+    }
+}
+
+//Undo the previous action
+function undo() {
+    redoStack.push(undoStack.pop());
+    source = getTopImage();
+    render();
+}
+//Undo the previous action
+function redo() {
+    undoStack.push(redoStack.pop());
+    source = getTopImage();
+    render();
+}
+
+
+
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undoB.addEventListener('click', handleUndo) 
+redoB.addEventListener('click', handleRedo)
 
 // Initial render
 render();
