@@ -3,12 +3,14 @@
 // WINNING_COMBOS, check, getNextPlayer, applyMove, createInitialState
 // are provided by game.js, loaded before this script.
 
-const cells    = document.querySelectorAll('.cell');
+const cells    = document.querySelectorAll('.cell'); // importando elementos de HTML
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
 
-let data = createInitialState();
-const board = document.getElementById('board');
+let data = createInitialState(); // criação de variável
+const board = document.getElementById('board'); // criação de variável constante
+
+
 
 function render() {
   cells.forEach((cell, i) => {
@@ -23,13 +25,19 @@ function setStatus(msg, cls = '') {
   status.className   = 'status' + (cls ? ` ${cls}` : '');
 }
 
-function handleClick(e) {
+function handleClick(e) { // em uma célula
+
   const idx = Number(e.currentTarget.dataset.index);
   if (data.board[idx] || data.gameOver) return;
 
-  const nextBoard = applyMove(data.board, idx, data.current);
+  const nextBoard = applyMove(data.board, idx);
   if (!nextBoard) return;
   data.board = nextBoard;
+  render();
+
+  const currentBoard = applyMove(data.board, idx, data.current);
+  if (!currentBoard) return;
+  data.board = currentBoard;
   render();
 
   // Animate the placed cell
@@ -50,7 +58,7 @@ function handleClick(e) {
     return;
   }
 
-  data.current = getNextPlayer(data.current);
+  //data.current = getNextPlayer(data.current); // preciso fazer uma dessa mas sem ir para o next player
   setStatus(`Player ${data.current}'s turn`);
 }
 
