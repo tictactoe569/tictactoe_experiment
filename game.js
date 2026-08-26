@@ -6,6 +6,9 @@ const WINNING_COMBOS = [
   [0, 4, 8], [2, 4, 6],            // diagonals
 ];
 
+var undoneRecently = false;
+var mostRecentMove = [10, ''];
+
 /**
  * Returns the initial game state.
  */
@@ -38,6 +41,11 @@ function applyMove(board, index, player) {
   if (board[index] !== '')    return null;
   const next = board.slice();
   next[index] = player;
+  mostRecentMove[0] = index;
+  if(player !== ''){
+    mostRecentMove[1] = player;
+  }
+
   return next;
 }
 
@@ -63,4 +71,18 @@ function check(board) {
 // Allow require() in Node.js (Jest) while remaining a plain script in the browser.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, check };
+}
+
+function Undo(board, current){
+  if(current !== mostRecentMove[1] && mostRecentMove[0] !== 10 && !undoneRecently){
+    undoneRecently = true;
+    applyMove(board, mostRecentMove[0], '');
+  }
+}
+
+function Redo(board){
+  if(undoneRecently && mostRecentMove[0] !== 10){
+    undoneRecently = false;
+    applyMove(board, mostRecentMove[0], mostRecentMove[1]);
+  }
 }

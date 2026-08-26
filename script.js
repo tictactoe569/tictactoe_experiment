@@ -28,6 +28,7 @@ function handleClick(e) {
   if (data.board[idx] || data.gameOver) return;
 
   const nextBoard = applyMove(data.board, idx, data.current);
+
   if (!nextBoard) return;
   data.board = nextBoard;
   render();
@@ -62,6 +63,8 @@ function restartGame() {
 
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undo.addEventListener('click', () => Undo(data.board, data.current));
+redo.addEventListener('click', () => Redo(data.board));
 
 // Initial render
 render();
