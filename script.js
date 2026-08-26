@@ -6,6 +6,9 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const undoBtn     = document.getElementById('undo');
+const redoBtn     = document.getElementById('redo');
+
 
 let data = createInitialState();
 const board = document.getElementById('board');
@@ -26,8 +29,15 @@ function setStatus(msg, cls = '') {
 function handleClick(e) {
   const idx = Number(e.currentTarget.dataset.index);
   if (data.board[idx] || data.gameOver) return;
+  moveGame(idx)
 
+  
+}
+
+function moveGame(idx){
+  console.log("Move Game ")
   const nextBoard = applyMove(data.board, idx, data.current);
+  console.log(nextBoard)
   if (!nextBoard) return;
   data.board = nextBoard;
   render();
@@ -60,8 +70,22 @@ function restartGame() {
   setStatus(`Player ${data.current}'s turn`);
 }
 
+function undoMoviment(){
+  console.log("undo clicked")
+  undo();
+  moveGame()
+
+}
+
+function redoMoviment(){
+  redo();
+  moveGame()
+}
+
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undoBtn.addEventListener('click', undoMoviment);
+redoBtn.addEventListener('click', redoMoviment);
 
 // Initial render
 render();

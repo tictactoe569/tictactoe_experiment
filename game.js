@@ -14,6 +14,8 @@ function createInitialState() {
     board:   Array(9).fill(''),
     current: 'X',
     gameOver: false,
+    flags: [false, false, false, false],
+    last_move: [],
   };
 }
 
@@ -22,8 +24,12 @@ function createInitialState() {
  * @param {'X'|'O'} current
  * @returns {'X'|'O'}
  */
-function getNextPlayer(current) {
-  return current === 'X' ? 'O' : 'X';
+function getNextPlayer(current, flag_undo_made, flag_redo_made) {
+  console.log(flag_undo_made)
+  if ((!flag_undo_made) || (flag_redo_made)){
+    return current === 'X' ? 'O' : 'X';
+  }
+  else return current
 }
 
 /**
@@ -33,11 +39,38 @@ function getNextPlayer(current) {
  * @param {'X'|'O'} player
  * @returns {string[]|null}
  */
-function applyMove(board, index, player) {
+function applyMove(board, index, player, flag_undo_made, flag_redo_made) {
   if (index < 0 || index > 8) return null;
   if (board[index] !== '')    return null;
-  const next = board.slice();
+
+  if (flag_undo_made){
+    var next = takeOff(last_move)
+  }
+  else if (flag_redo_made){
+    var next = last_move
+  }
+  else{
+    var next = board.slice();
+  }
   next[index] = player;
+  return next;
+}
+
+
+/**
+ * Returns a new board without the move applied, or null if the move is invalid.
+ * @param {string[]} board
+ * @param {number}   index  0-8
+ * @param {'X'|'O'} player
+ * @returns {string[]|null}
+ */
+function takeOff(board, index, player) {
+  if (index < 0 || index > 8) return null;
+  if (board[index] !== '')    return null;
+
+
+  
+  next[index] = '';
   return next;
 }
 
@@ -63,4 +96,50 @@ function check(board) {
 // Allow require() in Node.js (Jest) while remaining a plain script in the browser.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, check };
+}
+
+
+function undo(last_move, flag_undo_made, flag_can_make_redo,flag_can_make_undo){
+    console.log("undo called")
+
+  if (!last_move){
+    return
+  }
+  if(!flag_can_make_undo){
+    return
+  }
+
+  flag_can_make_redo = true
+  flag_can_make_undo = false
+  flag_undo_made = true
+  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+
+
+}
+
+
+function redo(last_move, flag_redo_made, flag_can_make_redo,flag_can_make_undo){
+  if (!last_move){
+    return
+  }
+  if(!flag_can_make_undo){
+    return
+  }
+
+  flag_can_make_redo = false
+  flag_can_make_undo = false
+  flag_redo_made = true
+  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+
+
+}
+
+function clear_flags(flag_undo_made, flag_redo_made, flag_can_make_redo,flag_can_make_undo){
+  flag_can_make_redo = false
+  flag_can_make_undo = false
+  flag_undo_made = false
+  flag_redo_made = false
+
+  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+
 }
