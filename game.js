@@ -1,5 +1,7 @@
 'use strict';
 
+
+//definição de listas que significam que o jogador ganhou
 const WINNING_COMBOS = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
   [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
@@ -22,6 +24,8 @@ function createInitialState() {
  * @param {'X'|'O'} current
  * @returns {'X'|'O'}
  */
+
+// função que passa para o próximo jogador mudando o estado de current para X ou O
 function getNextPlayer(current) {
   return current === 'X' ? 'O' : 'X';
 }
@@ -33,12 +37,20 @@ function getNextPlayer(current) {
  * @param {'X'|'O'} player
  * @returns {string[]|null}
  */
+
+// função de executar o movimento
 function applyMove(board, index, player) {
-  if (index < 0 || index > 8) return null;
-  if (board[index] !== '')    return null;
-  const next = board.slice();
-  next[index] = player;
-  return next;
+  if (index < 0 || index > 8) return null; // se o intervalo for inválido
+  if (board[index] !== '')    return null; // se o intervalo for vazio
+
+  const next
+
+  if (next = board.slice()){}
+    next[index] = player; // passa a vez para o próximo jogador
+    return next;
+  }
+
+  return // achar como eu faço para manter a vez do jogador atual
 }
 
 /**
@@ -50,12 +62,16 @@ function applyMove(board, index, player) {
  *   - null if the game is still in progress.
  */
 function check(board) {
-  for (const combo of WINNING_COMBOS) {
+  for (const combo of WINNING_COMBOS) { //checa se está presente um dos combos da lista de ganhador
     const [a, b, c] = combo;
+
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
       return { winner: board[a], combo };
     }
+
   }
+
+  //caso alternativo, ainda há jogadas a serem feitas
   if (board.every(cell => cell !== '')) return { winner: null, combo: [] };
   return null;
 }
