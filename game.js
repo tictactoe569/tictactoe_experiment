@@ -14,6 +14,7 @@ function createInitialState() {
     board:   Array(9).fill(''),
     current: 'X',
     gameOver: false,
+    
   };
 }
 
@@ -38,6 +39,7 @@ function applyMove(board, index, player) {
   if (board[index] !== '')    return null;
   const next = board.slice();
   next[index] = player;
+  
   return next;
 }
 
@@ -58,6 +60,15 @@ function check(board) {
   }
   if (board.every(cell => cell !== '')) return { winner: null, combo: [] };
   return null;
+}
+
+function undo(board,Last_move){
+  if(Last_move == null) return null
+  const previous = board.slice();
+  previous[Last_move] = ''
+
+
+  return previous
 }
 
 // Allow require() in Node.js (Jest) while remaining a plain script in the browser.

@@ -1,14 +1,19 @@
 'use strict';
 
-// WINNING_COMBOS, check, getNextPlayer, applyMove, createInitialState
+// WINNING_COMBOS, check, getNextPlayer, applyMove, createInitialState, undo
 // are provided by game.js, loaded before this script.
 
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const undoBtn = document.getElementById('undo');
+const redoBtn = document.getElementById('redo')
 
 let data = createInitialState();
 const board = document.getElementById('board');
+var Last_move = null
+var flag_undo = true
+
 
 function render() {
   cells.forEach((cell, i) => {
@@ -29,8 +34,16 @@ function handleClick(e) {
 
   const nextBoard = applyMove(data.board, idx, data.current);
   if (!nextBoard) return;
+ 
   data.board = nextBoard;
   render();
+
+  data.Last_move = idx
+  data.flag_undo = true
+  
+  
+  
+  
 
   // Animate the placed cell
   cells[idx].classList.add('placed');
@@ -60,8 +73,22 @@ function restartGame() {
   setStatus(`Player ${data.current}'s turn`);
 }
 
+function undoLastMove(){
+  if(flag_undo == false) return;
+  const previousBoard = undo(data.board,Last_move)
+  if (!previousBoard) return;
+  data.current = getNextPlayer(data.current);
+  setStatus(`Player ${data.current}'s turn`);
+  data.board = previousBoard
+  render();
+  flag_undo = false
+}
+
+
+
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undoBtn.addEventListener('click', undoLastMove);
 
 // Initial render
 render();
