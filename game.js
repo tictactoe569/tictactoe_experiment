@@ -6,10 +6,13 @@ const WINNING_COMBOS = [
   [0, 4, 8], [2, 4, 6],            // diagonals
 ];
 
+var lastMoveIndex = -1;
+
 /**
  * Returns the initial game state.
  */
 function createInitialState() {
+  lastMoveIndex = -1;
   return {
     board:   Array(9).fill(''),
     current: 'X',
@@ -36,8 +39,30 @@ function getNextPlayer(current) {
 function applyMove(board, index, player) {
   if (index < 0 || index > 8) return null;
   if (board[index] !== '')    return null;
+  lastMoveIndex = index;
   const next = board.slice();
   next[index] = player;
+  return next;
+}
+
+/**
+ * Returns a new board with the last undone move applied and the idx of the move, or null if no move has been made.
+ * @param {string[]} board
+ * @returns {number}  index  0-8
+ */
+function getLastMove(board, player) {
+  return lastMoveIndex;
+}
+
+/**
+ * Returns a new board with the last move unapplied, or null if no move has been made.
+ * @param {string[]} board
+ * @returns {string[]|null}
+ */
+function undoMove(board) {
+  if (lastMoveIndex < 0 || lastMoveIndex > 8) return null;
+  const next = board.slice();
+  next[lastMoveIndex] = '';
   return next;
 }
 
