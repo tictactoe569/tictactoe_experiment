@@ -198,7 +198,29 @@ function createInitialState() {
 
 Fica melhor e mais facil
 
+preciso refatorar as funcoes que eu fiz agora.
+
+function undo(last_move, flag_undo_made, flag_can_make_redo,flag_can_make_undo){
+
+  console.log("undo called")
+
+  if (!last_move){
+    return
+  }
+  if(!flag_can_make_undo){
+    return
+  }
+
+  flags[0] = true
+  flags[1] = false
+  flags[2] = true
+  return flags
+
+
+}
+
+ficou ruim de entender com flags[0] e assim... se tivesse mais tempo escreveria comentarios ou nomearia de outro jeito.... talvez usasse enum ou dicionario 
 
 
 Existem algumas coisas que eu faria diferente se tivesse mais tempo: 
-Li o codigo antes de implementar(não mudaria isso), mas se eu tivesse mais tempo talvez implementasse o front primeiro para ir testando devagar cada passo. Não achei a forma que eu fiz ruim, porque para o tempo qe tive, prefiro comecar pelo back, para não fazer nada correndo... Se começasse pelo front ficaria nervosa por nao saber quanto tempo levaria no back e não iria fazer nenhum deles com qualidade. Porém idealmente, com mais tempo iria fazendo e testando cada pedacinho e refinando 100%... Como nessa atividade era mais a logica de como refatorar, preferi comecar pela logica do back e ir voltando, testando as minhas modificações em blocos maiores, uma vez que foi explicado que o codigo não precisava rodar 100%. Assim, acho que estruturei a logica da maneira que quero, sabendo que os erros que estão aparcenedo são da linguagem... passagem de parametro, retorno de parametro e como armazeno as variaveis. 
+Li o codigo antes de implementar(não mudaria isso), mas se eu tivesse mais tempo talvez implementasse o front primeiro para ir testando devagar cada passo. Não achei a forma que eu fiz ruim, porque para o tempo qe tive, prefiro comecar pelo back, para não fazer nada correndo... Se começasse pelo front ficaria nervosa por nao saber quanto tempo levaria no back e não iria fazer nenhum deles com qualidade. Porém idealmente, com mais tempo iria fazendo e testando cada pedacinho e refinando 100%... Como nessa atividade era mais a logica de como refatorar, preferi comecar pela logica do back e ir voltando, testando as minhas modificações em blocos maiores, uma vez que foi explicado que o codigo não precisava rodar 100%. Assim, acho que estruturei a logica da maneira que quero, sabendo que os erros que estão aparcenedo são da linguagem... passagem de parametro, retorno de parametro e como armazeno as variaveis. O codigo nao funciona 100% mas agora só precisa chamar o clear flags na parte certa e fazer uns ajustes de sintaxe (que nao priorizei por não ser o foco da atividade, se fosse num codigo que a funcionalidade fosse a prioridade, isso seria priorizado, assim como o script de testes, que num codigo onde a funcionalidade fosse priorizada eu jamais deixara um teste nao passar apos alguma alteração completa). 

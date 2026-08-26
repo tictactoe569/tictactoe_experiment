@@ -18,13 +18,16 @@ function createInitialState() {
     last_move: [],
   };
 }
+/***flags[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made] */
 
 /**
  * Returns the next player given the current one.
  * @param {'X'|'O'} current
  * @returns {'X'|'O'}
  */
-function getNextPlayer(current, flag_undo_made, flag_redo_made) {
+function getNextPlayer(current, flags) {
+  flag_undo_made = flags[2]
+  flag_redo_made = flags[3]
   console.log(flag_undo_made)
   if ((!flag_undo_made) || (flag_redo_made)){
     return current === 'X' ? 'O' : 'X';
@@ -39,7 +42,9 @@ function getNextPlayer(current, flag_undo_made, flag_redo_made) {
  * @param {'X'|'O'} player
  * @returns {string[]|null}
  */
-function applyMove(board, index, player, flag_undo_made, flag_redo_made) {
+function applyMove(board, index, player, flags) {
+  flag_undo_made = flags[2]
+  flag_redo_made = flags[3]
   if (index < 0 || index > 8) return null;
   if (board[index] !== '')    return null;
 
@@ -98,48 +103,52 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, check };
 }
 
+/***flags[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made] */
 
-function undo(last_move, flag_undo_made, flag_can_make_redo,flag_can_make_undo){
-    console.log("undo called")
+function undo(last_move, flags){
+
+  console.log("undo called")
 
   if (!last_move){
     return
   }
-  if(!flag_can_make_undo){
+  /**can make undo */
+  if(!flags[1]){
     return
   }
 
-  flag_can_make_redo = true
-  flag_can_make_undo = false
-  flag_undo_made = true
-  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+  flags[0] = true
+  flags[1] = false
+  flags[2] = true
+  return flags
 
 
 }
 
 
-function redo(last_move, flag_redo_made, flag_can_make_redo,flag_can_make_undo){
+function redo(last_move, flags){
   if (!last_move){
     return
   }
-  if(!flag_can_make_undo){
+  /** can make undo */
+  if(!flags[1]){
     return
   }
 
-  flag_can_make_redo = false
-  flag_can_make_undo = false
-  flag_redo_made = true
-  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+  flags[0] = false
+  flags[1] = false
+  flags[3] = true
+  return flags
 
 
 }
 
-function clear_flags(flag_undo_made, flag_redo_made, flag_can_make_redo,flag_can_make_undo){
-  flag_can_make_redo = false
-  flag_can_make_undo = false
-  flag_undo_made = false
-  flag_redo_made = false
+function clear_flags(flags){
+  flags[0] = false
+  flags[1] = false
+  flags[2] = false
+  flags[3] = false
 
-  return[flag_can_make_redo, flag_can_make_undo, flag_undo_made, flag_redo_made]
+  return flags
 
 }
