@@ -6,6 +6,7 @@ const WINNING_COMBOS = [
   [0, 4, 8], [2, 4, 6],            // diagonals
 ];
 
+const atual = 0;
 /**
  * Returns the initial game state.
  */
@@ -38,6 +39,7 @@ function applyMove(board, index, player) {
   if (board[index] !== '')    return null;
   const next = board.slice();
   next[index] = player;
+  atual = board
   return next;
 }
 

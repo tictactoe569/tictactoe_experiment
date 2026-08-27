@@ -6,9 +6,13 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const undoBtn   = document.getElementById('undo');
+const redoBtn   = document.getElementById('redo');
 
 let data = createInitialState();
 const board = document.getElementById('board');
+
+const Newerboard = document.getElementById('Newerboard');
 
 function render() {
   cells.forEach((cell, i) => {
@@ -60,8 +64,23 @@ function restartGame() {
   setStatus(`Player ${data.current}'s turn`);
 }
 
+function undoGame(){
+  const checkCanDo = 1
+  data.current = getNextPlayer(data.current);
+  setStatus(`Player ${data.current}'s turn`);
+}
+
+function redoGame(){
+  const checkCanDo = 1
+  data.current = getNextPlayer(data.current);
+  setStatus(`Player ${data.current}'s turn`);
+
+}
+
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undoBtn.addEventListener('click', undoGame);
+redoBtn.addEventListener('click', redoGame);
 
 // Initial render
 render();
