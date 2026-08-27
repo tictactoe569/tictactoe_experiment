@@ -6,6 +6,9 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const undoBtn = document.getElementById('undo');
+const redoBtn = document.getElementById('redo');
+let current =0;
 
 let data = createInitialState();
 const board = document.getElementById('board');
@@ -23,8 +26,28 @@ function setStatus(msg, cls = '') {
   status.className   = 'status' + (cls ? ` ${cls}` : '');
 }
 
+function undofunction()
+{
+  data.board[current]='';
+  render();
+  data.current = getNextPlayer(data.current);
+  redoBtn.style.display = 'block';
+  undoBtn.style.display = 'none';
+}
+
+function redofunction()
+{
+  data.board[current]=data.current;
+  render();
+  data.current = getNextPlayer(data.current);
+  redoBtn.style.display = 'none';
+  
+}
+
 function handleClick(e) {
+  redoBtn.style.display = 'none';
   const idx = Number(e.currentTarget.dataset.index);
+  current = idx;
   if (data.board[idx] || data.gameOver) return;
 
   const nextBoard = applyMove(data.board, idx, data.current);
@@ -35,7 +58,10 @@ function handleClick(e) {
   // Animate the placed cell
   cells[idx].classList.add('placed');
 
+
   const result = check(data.board);
+
+  undoBtn.style.display = 'block';
 
   if (result) {
     data.gameOver = true;
@@ -55,6 +81,8 @@ function handleClick(e) {
 }
 
 function restartGame() {
+  redoBtn.style.display = 'none';
+  undoBtn.style.display = 'none';
   data = createInitialState();
   render();
   setStatus(`Player ${data.current}'s turn`);
@@ -62,6 +90,8 @@ function restartGame() {
 
 cells.forEach(cell => cell.addEventListener('click', handleClick));
 restartBtn.addEventListener('click', restartGame);
+undoBtn.addEventListener('click', undofunction);
+redoBtn.addEventListener('click', redofunction);
 
 // Initial render
 render();
