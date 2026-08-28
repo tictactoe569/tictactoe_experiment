@@ -6,6 +6,8 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const undoBtn     = document.getElementById('undo');
+const redoBtn     = document.getElementById('redo');
 
 let data = createInitialState();
 const board = document.getElementById('board');
@@ -60,7 +62,47 @@ function restartGame() {
   setStatus(`Player ${data.current}'s turn`);
 }
 
+function undo(e) {
+  if (data.gameOver) return;
+  if (data.undoState !== null) return;
+
+  // procura a última jogada feita
+  const idx = data.board.findLastIndex(cell => cell !== '');
+  if (idx === -1) return;
+
+  const result = applyUndo(data.board, idx, data.undoState);
+  if (!result) return;
+
+  data.board = result.board;
+  data.undoState = result.undoState;
+
+  data.current = getNextPlayer(data.current);
+
+  render();
+  setStatus(`Player ${data.current}'s turn`);
+}
+
+function redo() {
+  if (data.undoState === null) return;
+
+  const idx = data.undoState.index;
+
+  const result = applyRedo(data.board, idx, data.undoState);
+  if (!result) return;
+
+  data.board = result.board;
+  data.undoState = result.undoState;
+
+  data.current = getNextPlayer(data.current);
+
+  render();
+  setStatus(`Player ${data.current}'s turn`);
+}
+
+
 cells.forEach(cell => cell.addEventListener('click', handleClick));
+undoBtn.addEventListener('click', undo);
+redoBtn.addEventListener('click', redo);
 restartBtn.addEventListener('click', restartGame);
 
 // Initial render

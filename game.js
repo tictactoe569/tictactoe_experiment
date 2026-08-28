@@ -14,6 +14,7 @@ function createInitialState() {
     board:   Array(9).fill(''),
     current: 'X',
     gameOver: false,
+    undoState: null,
   };
 }
 
@@ -41,6 +42,44 @@ function applyMove(board, index, player) {
   return next;
 }
 
+function applyUndo(board, index, undoState) {
+  if (index < 0 || index > 8) return null;
+  if (undoState !== null) return null;
+
+  const next = board.slice();
+
+  if (next[index] === '') return null;
+
+  // guarda qual jogador tava naquela posição
+  const player = next[index];
+
+  next[index] = '';
+
+  return {
+    board: next,
+    undoState: {
+      index: index,
+      player: player
+    }
+  };
+}
+
+function applyRedo(board, index, undoState) {
+  if (undoState === null) return null;
+  if (index < 0 || index > 8) return null;
+  if (board[index] !== '') return null;
+
+  const next = board.slice();
+
+  next[index] = undoState.player;
+
+  return {
+    board: next,
+    undoState: null
+  };
+}
+
+
 /**
  * Checks the board for a winner or draw.
  * @param {string[]} board
@@ -62,5 +101,5 @@ function check(board) {
 
 // Allow require() in Node.js (Jest) while remaining a plain script in the browser.
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, check };
+  module.exports = { WINNING_COMBOS, createInitialState, getNextPlayer, applyMove, applyUndo, applyRedo, check };
 }

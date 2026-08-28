@@ -110,6 +110,183 @@ describe('applyMove', () => {
 });
 
 // ---------------------------------------------------------------------------
+// applyUndo
+// ---------------------------------------------------------------------------
+
+describe('applyUndo', () => {
+  test('removes the player mark from the correct cell', () => {
+    const board = boardFrom('X        ');
+    const result = applyUndo(board, 0, null);
+
+    expect(result).not.toBeNull();
+    expect(result.board[0]).toBe('');
+  });
+
+  test('does not mutate the original board', () => {
+    const board = boardFrom('X        ');
+
+    applyUndo(board, 0, null);
+
+    expect(board[0]).toBe('X');
+  });
+
+  test('returns the removed player in undoState', () => {
+    const board = boardFrom('X        ');
+    const result = applyUndo(board, 0, null);
+
+    expect(result.undoState).toEqual({
+      index: 0,
+      player: 'X'
+    });
+  });
+
+  test('returns the correct index in undoState', () => {
+    const board = boardFrom('   O     ');
+    const result = applyUndo(board, 3, null);
+
+    expect(result.undoState.index).toBe(3);
+  });
+
+  test('returns null when cell is empty', () => {
+    const board = Array(9).fill('');
+
+    expect(applyUndo(board, 0, null)).toBeNull();
+  });
+
+  test('returns null when index is below 0', () => {
+    const board = boardFrom('X        ');
+
+    expect(applyUndo(board, -1, null)).toBeNull();
+  });
+
+  test('returns null when index is above 8', () => {
+    const board = boardFrom('X        ');
+
+    expect(applyUndo(board, 9, null)).toBeNull();
+  });
+
+  test('returns null when undoState is not null', () => {
+    const board = boardFrom('X        ');
+    const undoState = {
+      index: 0,
+      player: 'X'
+    };
+
+    expect(applyUndo(board, 0, undoState)).toBeNull();
+  });
+
+  test('all other cells remain unchanged', () => {
+    const board = boardFrom('XO X     ');
+    const result = applyUndo(board, 3, null);
+
+    expect(result.board).toEqual(boardFrom('XO       '));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// applyRedo
+// ---------------------------------------------------------------------------
+
+describe('applyRedo', () => {
+  test('places the undone player mark on the correct cell', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: 4,
+      player: 'X'
+    };
+
+    const result = applyRedo(board, 4, undoState);
+
+    expect(result).not.toBeNull();
+    expect(result.board[4]).toBe('X');
+  });
+
+  test('does not mutate the original board', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: 0,
+      player: 'X'
+    };
+
+    applyRedo(board, 0, undoState);
+
+    expect(board[0]).toBe('');
+  });
+
+  test('returns null when undoState is null', () => {
+    const board = Array(9).fill('');
+
+    expect(applyRedo(board, 0, null)).toBeNull();
+  });
+
+  test('returns null when index is below 0', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: -1,
+      player: 'X'
+    };
+
+    expect(applyRedo(board, -1, undoState)).toBeNull();
+  });
+
+  test('returns null when index is above 8', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: 9,
+      player: 'X'
+    };
+
+    expect(applyRedo(board, 9, undoState)).toBeNull();
+  });
+
+  test('returns null when cell is already occupied', () => {
+    const board = boardFrom('X        ');
+    const undoState = {
+      index: 0,
+      player: 'O'
+    };
+
+    expect(applyRedo(board, 0, undoState)).toBeNull();
+  });
+
+  test('clears undoState after redo', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: 4,
+      player: 'X'
+    };
+
+    const result = applyRedo(board, 4, undoState);
+
+    expect(result.undoState).toBeNull();
+  });
+
+  test('restores the correct player', () => {
+    const board = Array(9).fill('');
+    const undoState = {
+      index: 4,
+      player: 'O'
+    };
+
+    const result = applyRedo(board, 4, undoState);
+
+    expect(result.board[4]).toBe('O');
+  });
+
+  test('all other cells remain unchanged', () => {
+    const board = boardFrom('X        ');
+    const undoState = {
+      index: 4,
+      player: 'O'
+    };
+
+    const result = applyRedo(board, 4, undoState);
+
+    expect(result.board).toEqual(boardFrom('X   O    '));
+  });
+});
+
+// ---------------------------------------------------------------------------
 // check
 // ---------------------------------------------------------------------------
 
