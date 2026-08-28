@@ -49,3 +49,9 @@ Testes feitos:
 - Checa se o redo restaura o jogador correto.
 - Checa se as outras células permanecem inalteradas após o redo.
 - Checa se uma jogada desfeita pode ser restaurada pelo redo.
+
+Bugs:
+
+- Quando o usuário realiza uma jogada e faz o undo, se ele não fizer o redo, o undo salva o state da ultima jogada e nunca volta para o estado inicial. Isso faz com que, por exemplo, jogador "X" fez jogada para o índice [0], undoState = 0. Jogador "X" não faz o redo e o jogador "O" faz uma jogada, o jogador "X" consegue dar o redo caso o índice [0] não esteja com alguma jogada, o redo ocorre e o jogador "X" possui uma jogada extra.
+
+Para resolver isso seria necessário remover o undoState de dentro da função createInitialState(), pois dessa maneira, conseguiríamos deixar o undoState = null sem ter que chamar a função de gerar o initial state e recomeçar o jogo. 
