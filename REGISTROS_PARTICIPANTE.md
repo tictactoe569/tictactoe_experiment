@@ -8,6 +8,8 @@ documentação própria da solução;
 
 - anotações;
 
+- refatorações;
+
 - rascunhos;
 
 - observações;

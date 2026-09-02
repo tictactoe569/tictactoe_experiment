@@ -49,6 +49,11 @@ Antes de continuar, confirme que não existem alterações locais:
 git status
 ```
 
+Para abrir o VSCode:
+
+```bash
+code .
+```
 ---
 
 ## 3. Executando o Projeto
